@@ -30,36 +30,32 @@ export default function NavbarComponent(cartCount) {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="/">
             Home
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="/shop">
             Shop
           </Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
-        </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
+          <Button as={Link} color="primary" href="/cart" variant="flat">
             <FontAwesomeIcon icon={faShoppingCart} />
             {cartCount.cartCount ? cartCount.cartCount : "Zero"}
-            {/* {console.log(cartCount.cartCount)} */}
           </Button>
         </NavbarItem>
       </NavbarContent>
       <NavbarMenu>
         <NavbarMenuItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="/">
             Home
           </Link>
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="/shop">
             Shop
           </Link>
         </NavbarMenuItem>
