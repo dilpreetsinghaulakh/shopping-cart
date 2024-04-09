@@ -10,6 +10,7 @@ import {
 } from "@nextui-org/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart, faStar } from "@fortawesome/free-solid-svg-icons";
+import ErrorPage from "./Error";
 
 const getData = () => {
   const [data, setData] = useState(null);
@@ -17,10 +18,19 @@ const getData = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("https://fakestoreapi.com/products/category/electronics")
-      .then((res) => res.json())
-      .then((res) => setData(res))
-      .catch((error) => setError(error))
+    fetch("https://fakestoreapi.com/products/category/electronics", {
+      mode: "cors",
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Server error: status ${res.status}`); // More specific message
+        }
+        return res.json();
+      })
+      .then((res) => {
+        setData(res);
+      })
+      .catch((error) => setError(error.message)) // Use error message for clarity
       .finally(() => setLoading(false));
   }, []);
 
@@ -31,7 +41,7 @@ export default function Shop() {
   const { data, loading, error } = getData();
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    <ErrorPage />;
   }
   if (loading) {
     return <div>Loading...</div>;
@@ -41,7 +51,6 @@ export default function Shop() {
     const [cartCount, setCartCount] = useState(1);
     return (
       <Card className="p-0 sm:p-4">
-        {console.log(item)}
         <CardBody>
           <div className="flex gap-2 sm:gap-4 items-center">
             <div className="p-4 border rounded-lg w-32 min-w-32 h-32 sm:w-40 sm:min-w-40 sm:h-40 flex items-center justify-center">
@@ -96,7 +105,7 @@ export default function Shop() {
   return (
     <div className="p-2 sm:p-6">
       <h1 className="text-5xl mb-4">Shop</h1>
-      <div className="grid gap-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {data.map((item) => (
           <ItemCard key={item.id} item={item} />
         ))}
