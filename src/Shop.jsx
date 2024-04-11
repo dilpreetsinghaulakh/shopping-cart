@@ -11,6 +11,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart, faStar } from "@fortawesome/free-solid-svg-icons";
 import ErrorPage from "./Error";
+import LoadingPage from "./Loading";
 
 const getData = () => {
   const [data, setData] = useState(null);
@@ -23,14 +24,14 @@ const getData = () => {
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error(`Server error: status ${res.status}`); // More specific message
+          throw new Error(`Server error: status ${res.status}`);
         }
         return res.json();
       })
       .then((res) => {
         setData(res);
       })
-      .catch((error) => setError(error.message)) // Use error message for clarity
+      .catch((error) => setError(error.message))
       .finally(() => setLoading(false));
   }, []);
 
@@ -41,10 +42,10 @@ export default function Shop() {
   const { data, loading, error } = getData();
 
   if (error) {
-    <ErrorPage />;
+    return <ErrorPage />;
   }
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingPage />;
   }
 
   function ItemCard({ item }) {
@@ -103,9 +104,9 @@ export default function Shop() {
     );
   }
   return (
-    <div className="p-2 sm:p-6">
+    <div className="p-2 sm:p-6 max-w-5xl mx-auto">
       <h1 className="text-5xl mb-4">Shop</h1>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 ">
         {data.map((item) => (
           <ItemCard key={item.id} item={item} />
         ))}
