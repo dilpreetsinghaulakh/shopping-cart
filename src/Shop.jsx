@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useState } from "react";
 import {
   Card,
@@ -12,6 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart, faStar } from "@fortawesome/free-solid-svg-icons";
 import ErrorPage from "./Error";
 import LoadingPage from "./Loading";
+import { addToCart } from "./cartLogic";
 import getData from "./getShopData";
 
 export default function Shop() {
@@ -54,7 +54,11 @@ export default function Shop() {
         </CardBody>
 
         <CardFooter className="m-0 gap-2">
-          <Button color="primary" className="w-full text-base font-bold">
+          <Button
+            color="primary"
+            className="w-full text-base font-bold"
+            onClick={() => addToCart(item.id, parseInt(cartCount))}
+          >
             Add to Cart
           </Button>
 
