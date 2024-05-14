@@ -1,8 +1,16 @@
-import { Card, CardBody, Image } from "@nextui-org/react";
+import { Card, CardBody, Image, Input } from "@nextui-org/react";
 import ErrorPage from "./Error";
 import LoadingPage from "./Loading";
-import getCart from "./cartLogic";
+import getCart, { removeFromCart, updateCart } from "./cartLogic";
 import getData from "./getShopData";
+import { useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faDumpster,
+  faMinus,
+  faPlus,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function CartPage() {
   const cart = getCart();
@@ -18,9 +26,11 @@ export default function CartPage() {
 
     function ItemCard({ id, count }) {
       const item = data.find((item) => item.id === id);
+      const [itemCount, setItemCount] = useState(count);
+      const cardRef = useRef();
 
       return (
-        <Card className="p-0 sm:p-4 w-full">
+        <Card className="p-0 sm:p-4 w-full" ref={cardRef}>
           <CardBody>
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="p-1 border rounded-lg w-16 min-w-16 h-16 flex items-center justify-center">
@@ -37,18 +47,63 @@ export default function CartPage() {
               <h2 className="font-bold">{item.title}</h2>
             </div>
             <div className="flex items-center gap-2 mt-3">
-              <p className="text-neutral-600 text-xl">
-                ${item.price} &times; {count}
-              </p>
+              <span className="text-neutral-600 text-xl flex items-center gap-2">
+                <Input
+                  type="number"
+                  value={itemCount}
+                  min={1}
+                  max={999}
+                  classNames={{
+                    input: ["w-8", "sm:w-12"],
+                    base: ["w-fit"],
+                  }}
+                  onChange={(e) => {
+                    setItemCount(e.target.value);
+                    updateCart(item.id, parseInt(e.target.value));
+                  }}
+                  startContent={
+                    itemCount === 1 ? (
+                      <button
+                        onClick={() => {
+                          removeFromCart(item.id);
+                          cardRef.current.style.display = "none";
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faTrash} className="text-lg" />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setItemCount(itemCount - 1);
+                          updateCart(item.id, itemCount - 1);
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faMinus} className="text-lg" />
+                      </button>
+                    )
+                  }
+                  endContent={
+                    <button
+                      onClick={() => {
+                        setItemCount(itemCount + 1);
+                        updateCart(item.id, itemCount + 1);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faPlus} className="text-lg" />
+                    </button>
+                  }
+                ></Input>
+                <p> &times; ${item.price}</p>
+              </span>
               <div className="bg-neutral-200 h-[2px] rounded-full flex-grow"></div>
               <h3 className="font-bold text-3xl">
-                ${parseInt(item.price * count)}
+                ${parseInt(item.price * itemCount)}
                 <span className=" text-base">
                   .
                   {
-                    (parseFloat(item.price * count, 10).toFixed(2) + "").split(
-                      "."
-                    )[1]
+                    (
+                      parseFloat(item.price * itemCount, 10).toFixed(2) + ""
+                    ).split(".")[1]
                   }
                 </span>
               </h3>
