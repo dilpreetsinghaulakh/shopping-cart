@@ -4,7 +4,7 @@ export default function ErrorPage(error) {
       <h1 className="text-5xl font-black">
         Opps there is an <em className="text-red-500">error</em>
       </h1>
-      <p className="font-mono text-neutral-700">Error Code: {error.message}</p>
+      <p className="font-mono text-neutral-700">Error Code: {error.message || error.error}</p>
     </div>
   );
 }
