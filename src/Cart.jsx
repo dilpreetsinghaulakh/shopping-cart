@@ -28,7 +28,10 @@ export default function CartPage() {
       const cardRef = useRef();
 
       return (
-        <Card className="p-0 sm:p-4 w-full" ref={cardRef}>
+        <Card
+          className="p-0 sm:p-4 w-full rounded-none shadow-none bg-transparent"
+          ref={cardRef}
+        >
           <CardBody>
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="p-1 border rounded-lg w-16 min-w-16 h-16 flex items-center justify-center">
@@ -129,7 +132,7 @@ export default function CartPage() {
     return (
       <div className="p-2 sm:p-6 max-w-5xl mx-auto">
         <h1 className="text-5xl font-black mb-4">Cart</h1>
-        <div className="flex flex-col gap-4 items-center justify-center">
+        <div className="flex flex-col rounded-lg border items-center justify-center">
           {Object.keys(cart).map((productId, i) => (
             <ItemCard
               key={i}
@@ -137,6 +140,44 @@ export default function CartPage() {
               count={cart[productId]}
             />
           ))}
+
+          <div className="bg-neutral-200 h-[1px] w-full"></div>
+
+          <div className="flex items-center w-full p-4 sm:p-8 gap-2">
+            <h2 className="text-3xl font-bold">Total</h2>
+            <div className="bg-neutral-200 h-[2px] rounded-full flex-grow"></div>
+            <h2 className="text-3xl font-bold">
+              $
+              {parseInt(
+                data
+                  .filter((item) =>
+                    Object.keys(cart).includes(item.id.toString())
+                  )
+                  .reduce((acc, item) => {
+                    return acc + item.price * cart[item.id];
+                  }, 0)
+                  .toFixed(2)
+              )}
+              <span className="text-base">
+                .
+                {
+                  (
+                    parseFloat(
+                      data
+                        .filter((item) =>
+                          Object.keys(cart).includes(item.id.toString())
+                        )
+                        .reduce((acc, item) => {
+                          return acc + item.price * cart[item.id];
+                        }, 0)
+                        .toFixed(2),
+                      10
+                    ).toFixed(2) + ""
+                  ).split(".")[1]
+                }
+              </span>
+            </h2>
+          </div>
         </div>
         <div />
       </div>
