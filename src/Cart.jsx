@@ -1,18 +1,16 @@
 import { Card, CardBody, Image, Input } from "@nextui-org/react";
 import ErrorPage from "./Error";
 import LoadingPage from "./Loading";
-import getCart, { removeFromCart, updateCart } from "./cartLogic";
 import getData from "./getShopData";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faDumpster,
-  faMinus,
-  faPlus,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { CartContext } from "./App";
 
 export default function CartPage() {
+  const { cartCount, adjustCount, removeFromCart, updateCart, getCart } =
+    useContext(CartContext);
+
   const cart = getCart();
 
   if (Object.keys(cart).length === 0) {
@@ -60,6 +58,12 @@ export default function CartPage() {
                   onChange={(e) => {
                     setItemCount(e.target.value);
                     updateCart(item.id, parseInt(e.target.value));
+                    const cart = JSON.parse(localStorage.getItem("cart"));
+                    let count = 0;
+                    for (const key in cart) {
+                      count += cart[key];
+                    }
+                    adjustCount(count);
                   }}
                   startContent={
                     itemCount === 1 ? (
@@ -67,6 +71,7 @@ export default function CartPage() {
                         onClick={() => {
                           removeFromCart(item.id);
                           cardRef.current.style.display = "none";
+                          adjustCount(cartCount - 1);
                         }}
                       >
                         <FontAwesomeIcon icon={faTrash} className="text-lg" />
@@ -76,6 +81,7 @@ export default function CartPage() {
                         onClick={() => {
                           setItemCount(itemCount - 1);
                           updateCart(item.id, itemCount - 1);
+                          adjustCount(cartCount - 1);
                         }}
                       >
                         <FontAwesomeIcon icon={faMinus} className="text-lg" />
@@ -87,6 +93,7 @@ export default function CartPage() {
                       onClick={() => {
                         setItemCount(itemCount + 1);
                         updateCart(item.id, itemCount + 1);
+                        adjustCount(cartCount + 1);
                       }}
                     >
                       <FontAwesomeIcon icon={faPlus} className="text-lg" />

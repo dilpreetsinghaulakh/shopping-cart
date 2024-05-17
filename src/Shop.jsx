@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   Card,
   CardBody,
@@ -11,21 +11,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart, faStar } from "@fortawesome/free-solid-svg-icons";
 import ErrorPage from "./Error";
 import LoadingPage from "./Loading";
-import { addToCart } from "./cartLogic";
 import getData from "./getShopData";
+import { CartContext } from "./App";
 
 export default function Shop() {
   const { data, loading, error } = getData();
 
+  const { addToCart, adjustCount } = useContext(CartContext);
+
   if (error) {
-    return <ErrorPage />;
+    return <ErrorPage error={error} />;
   }
   if (loading) {
     return <LoadingPage />;
   }
 
   function ItemCard({ item }) {
-    const [cartCount, setCartCount] = useState(1);
+    const [itemCount, setItemCount] = useState(1);
     return (
       <Card className="p-0 sm:p-4">
         <CardBody>
@@ -57,7 +59,16 @@ export default function Shop() {
           <Button
             color="primary"
             className="w-full text-base font-bold"
-            onClick={() => addToCart(item.id, parseInt(cartCount))}
+            onClick={() => {
+              addToCart(item.id, parseInt(itemCount));
+
+              const cart = JSON.parse(localStorage.getItem("cart"));
+              let count = 0;
+              for (const key in cart) {
+                count += cart[key];
+              }
+              adjustCount(count);
+            }}
           >
             Add to Cart
           </Button>
@@ -66,7 +77,7 @@ export default function Shop() {
             type="number"
             min={1}
             max={999}
-            value={cartCount}
+            value={itemCount}
             startContent={
               <FontAwesomeIcon
                 icon={faShoppingCart}
@@ -77,7 +88,7 @@ export default function Shop() {
               input: ["w-8", "sm:w-12"],
               base: ["w-fit"],
             }}
-            onChange={(e) => setCartCount(e.target.value)}
+            onChange={(e) => setItemCount(e.target.value)}
           />
         </CardFooter>
       </Card>
