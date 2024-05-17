@@ -44,7 +44,7 @@ export default function NavbarComponent(cartCount) {
         <NavbarItem>
           <Button as={Link} color="primary" href="/cart" variant="flat">
             <FontAwesomeIcon icon={faShoppingCart} />
-            {cartCount.cartCount ? cartCount.cartCount : "Zero"}
+            {cartCount.cartCount > 0 ? cartCount.cartCount : "Zero"}
           </Button>
         </NavbarItem>
       </NavbarContent>
